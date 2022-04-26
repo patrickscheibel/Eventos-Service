@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table {
+                width: 60%;
+                border-collapse: collapse;
+                align-items: center;
+                border-radius: 30%;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+            }
+
+            th {
+                text-align: center;
+                height: 50px;
+                background-color: #4d4d4d;
+                color: #ffffff;
+            }
+
+            tbody tr:nth-child(odd) {
+                background: #ffffff;
+            }
+
+            tbody tr:nth-child(even) {
+                background: #f4f4f4;
+            }
+
+            .menu-form input {
+                width: 100%;
+                padding: 10px;
+                background-color: #535b63;
+                border: 0;
+                box-sizing: border-box;
+                cursor: pointer;
+                font-weight: bold;
+                color: #ffffff;
+            }
+        </style>
+    </head>
+
+    <body onLoad="start()">
+        <div id="dvTable"></div>
+        <button onclick="returnMenu()">Voltar</button>
+    </body>
+</html>
+
+<script type="text/javascript">
+    function start() {
+        const url = new URL(window.location);
+        const list = url.searchParams.get("list");
+        var user_id = url.searchParams.get("id");
+        var error = url.searchParams.get("error");
+        var path = url.searchParams.get("path");
+
+        var subList = JSON.parse(list);
+
+        if (path != null) {
+            window.open("//" + path, "_blank");
+        }
+
+        GenerateTable(subList, user_id);
+
+        if (error == "true") {
+            alert("Certificado Valido")
+        }
+    }
+
+    function returnMenu() {
+        const url = new URL(window.location);
+
+        window.location.href = '/menu?id=' + url.searchParams.get("id");
+    }
+
+    function GenerateTable(subList, user_id) {
+        //Build an array containing Customer records.
+        var customers = new Array();
+        customers.push(["Id", "Nome do Evento", "Descrição do Evento", "Inicia", "Término", "Ação"]);
+
+        for (const key in subList) {
+            if (subList.hasOwnProperty(key)) {
+                var id = subList[key].id;
+                var name = subList[key].name;
+                var description = subList[key].description;
+                var start = formatDate(new Date(subList[key].starts_at));
+                var end = formatDate(new Date(subList[key].ends_at));
+
+                var sub = "";
+
+                if(subList[key].checkin_date == false && subList[key].unsubscribed == false
+                    && ((((new Date(subList[key].starts_at)).getTime() - new Date().getTime())/(1000 * 3600 *24)) > 2)) {
+                    sub = "<form action='unSubscribed' method='POST'><input type='hidden' name='user_id' value='" + user_id + "'><input type='hidden' name='id' value='" + subList[key].id + "'><input type='submit' value='Cancelar'></form>"
+                }
+
+                if (subList[key].unsubscribed == true) {
+                    sub += "<b>Inscrição Cancelada</b>"
+                }
+
+                if (subList[key].checkin_date == true) {
+                    sub += "<form action='createCertificate' method='POST'><input type='hidden' name='user_id' value='" + user_id + "'><input type='hidden' name='subscription_id' value='" + subList[key].id + "'><input type='hidden' name='text' value='" + subList[key].name + "'><input type='submit' value='Gerar Certificado'></form>"
+                    sub += "<form action='validateCertificate' method='POST'><input type='hidden' name='user_id' value='" + user_id + "'><input type='text' name='subscription_id' value='" + subList[key].id + "'><input type='submit' value='Validar Certificado'></form>"
+                }
+
+                customers.push([id, name, description, start, end, sub]);
+            }
+        }
+
+        //Create a HTML Table element.
+        var table = document.createElement("TABLE");
+        table.border = "1";
+
+        //Get the count of columns.
+        var columnCount = customers[0].length;
+
+        //Add the header row.
+        var row = table.insertRow(-1);
+        for (var i = 0; i < columnCount; i++) {
+            var headerCell = document.createElement("TH");
+            headerCell.innerHTML = customers[0][i];
+            row.appendChild(headerCell);
+        }
+
+        //Add the data rows.
+        for (var i = 1; i < customers.length; i++) {
+            row = table.insertRow(-1);
+            for (var j = 0; j < columnCount; j++) {
+                var cell = row.insertCell(-1);
+                cell.innerHTML = customers[i][j];
+            }
+        }
+
+        var dvTable = document.getElementById("dvTable");
+        dvTable.innerHTML = "";
+        dvTable.appendChild(table);
+    }
+
+    formatDate = function (date) {
+        return (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+    }
+</script>

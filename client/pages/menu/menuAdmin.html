@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Menu</title>
+		<style>
+			.menu-form {
+				width: 300px;
+				margin: 0 auto;
+				font-family: Tahoma, Geneva, sans-serif;
+			}
+
+			.menu-form h1 {
+				text-align: center;
+				color: #4d4d4d;
+				font-size: 24px;
+				padding: 20px 0 20px 0;
+			}
+
+			.menu-form input[type="submit"] {
+				width: 100%;
+				padding: 10px;
+				background-color: #535b63;
+				border: 0;
+				box-sizing: border-box;
+				cursor: pointer;
+				font-weight: bold;
+				color: #ffffff;
+			}
+			.menu-form a {
+				width: 100%;
+				padding: 10px;
+				background-color: #535b63;
+				border: 0;
+				box-sizing: border-box;
+				cursor: pointer;
+				font-weight: bold;
+				color: #ffffff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="menu-form">
+			<h1>Menu de Administração</h1>
+			<form action="listEventsAdmin" method="POST">
+				<input type="hidden" name="user_id" id="id1">
+				<input type="submit" value="Ver Eventos">
+			</form>
+			<a href="/logout">Sair</a>
+		</div>
+
+		<script>
+			var url = new URL(window.location);
+			var id = url.searchParams.get("id");
+
+			document.getElementById("id1").value = id;
+		</script>
+	</body>
+</html>

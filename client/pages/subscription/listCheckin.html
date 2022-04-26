@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table {
+                width: 60%;
+                border-collapse: collapse;
+                align-items: center;
+                border-radius: 30%;
+            }
+
+            table,
+            th,
+            td {
+                border: 1px solid black;
+            }
+
+            th {
+                text-align: center;
+                height: 50px;
+                background-color: #4d4d4d;
+                color: #ffffff;
+            }
+
+            tbody tr:nth-child(odd) {
+                background: #ffffff;
+            }
+
+            tbody tr:nth-child(even) {
+                background: #f4f4f4;
+            }
+
+            .menu-form input {
+                width: 100%;
+                padding: 10px;
+                background-color: #535b63;
+                border: 0;
+                box-sizing: border-box;
+                cursor: pointer;
+                font-weight: bold;
+                color: #ffffff;
+            }
+        </style>
+    </head>
+
+    <body onLoad="start()">
+        <div id="dvTable"></div>
+        <form action="listEventsAdmin" method="POST">
+            <input type="hidden" name="user_id" id="user_id">
+            <input type="submit" value="Voltar">
+        </form>
+        <button onclick="simpleCreateUser()">Cadastro Rápido</button>
+        <!-- <button onclick="createSubscription()">Incrição Rapido</button> -->
+
+        <script type="text/javascript">
+
+            var id_user = "";
+            var id_event = "";
+
+            function start() {
+                const url = new URL(window.location);
+                const list = url.searchParams.get("list");
+                var user_id = url.searchParams.get("id");
+                var error = url.searchParams.get("error");
+
+                var userList = JSON.parse(list);
+
+                GenerateTable(userList, user_id);
+                goBack(user_id);
+
+                id_event = userList[0].event_id;
+                id_user = user_id;
+
+                if (error == "true") {
+                    alert("Presença Cadastrada");
+                }
+            }
+
+            function simpleCreateUser() {
+                window.open("/simpleCreate?user_id=" + id_user + "&event_id=" + id_event, '_self')
+            }
+
+            function goBack(user_id) {
+                document.getElementById("user_id").value = user_id;
+            }
+
+            function GenerateTable(userList, user_id) {
+            
+                //Build an array containing Customer records.
+                var customers = new Array();
+                customers.push(["Id", "Participante", "CPF", "Data da Incrição", "Ação"]);
+
+                for (const key in userList) {
+                    if (userList.hasOwnProperty(key)) {
+                        var id = userList[key].id;
+                        var name = userList[key].name;
+                        var cpf = userList[key].cpf;
+                        var subscribed_at = formatDate(new Date(userList[key].subscribed_at));
+
+                        var sub = "";
+
+                        if (userList[key].checkin_date == true) {
+                            sub += "<form action='checkin' method='POST'><input type='hidden' name='event_id' value='" + userList[key].event_id + "'><input type='hidden' name='user_id' value='" + id + "'><input type='hidden' name='id' value='" + id + "'><input type='submit' value='Confirmar Presença'></form>"
+                        } else {
+                            sub += "<b>Presença Confirmada</b>"
+                        }
+
+                        customers.push([id, name, cpf, subscribed_at, sub]);
+                    }
+                }
+
+                //Create a HTML Table element.
+                var table = document.createElement("TABLE");
+                table.border = "1";
+
+                //Get the count of columns.
+                var columnCount = customers[0].length;
+
+                //Add the header row.
+                var row = table.insertRow(-1);
+                for (var i = 0; i < columnCount; i++) {
+                    var headerCell = document.createElement("TH");
+                    headerCell.innerHTML = customers[0][i];
+                    row.appendChild(headerCell);
+                }
+
+                //Add the data rows.
+                for (var i = 1; i < customers.length; i++) {
+                    row = table.insertRow(-1);
+                    for (var j = 0; j < columnCount; j++) {
+                        var cell = row.insertCell(-1);
+                        cell.innerHTML = customers[i][j];
+                    }
+                }
+
+                var dvTable = document.getElementById("dvTable");
+                dvTable.innerHTML = "";
+                dvTable.appendChild(table);
+            }
+
+            formatDate = function (date) {
+                return (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+            }
+        </script>
+
+    </body>
+</html>

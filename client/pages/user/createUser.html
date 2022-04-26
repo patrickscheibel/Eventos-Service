@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>CreateUser</title>
+		<style>
+			.create-form {
+				width: 300px;
+				margin: 0 auto;
+				font-family: Tahoma, Geneva, sans-serif;
+			}
+
+			.create-form h1 {
+				text-align: center;
+				color: #4d4d4d;
+				font-size: 24px;
+				padding: 20px 0 20px 0;
+			}
+
+			.create-form input[type="password"],
+			.create-form input[type="text"] {
+				width: 100%;
+				padding: 15px;
+				border: 1px solid #dddddd;
+				margin-bottom: 15px;
+				box-sizing: border-box;
+			}
+
+			.create-form input[type="submit"] {
+				width: 100%;
+				padding: 15px;
+				background-color: #535b63;
+				border: 0;
+				box-sizing: border-box;
+				cursor: pointer;
+				font-weight: bold;
+				color: #ffffff;
+			}
+
+			.create-form input[type="button"] {
+				width: 100%;
+				padding: 15px;
+				background-color: black;
+				border: 0;
+				box-sizing: border-box;
+				cursor: pointer;
+				font-weight: bold;
+				color: #ffffff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="create-form">
+			<h1>Cadastro de usuario</h1>
+			<form action="createUser" method="POST">
+				<label>Nome</label>
+				<input type="text" name="name" placeholder="Nome" required>
+				<label>CPF</label>
+				<input type="text" name="cpf" placeholder="CPF" required>
+				<label>Email</label>
+				<input type="text" name="email" placeholder="Email" required>
+				<label>Senha</label>
+				<input type="password" name="password" placeholder="Password" required>
+				<input type="submit" value="Cadastrar">
+				<input type="button" onclick="goBack()" value="Voltar">
+			</form>
+		</div>
+	</body>
+	<script>
+		function goBack() {
+			window.history.back();
+		}
+	</script>
+</html>
