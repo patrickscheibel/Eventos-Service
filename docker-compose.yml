@@ -1,0 +1,67 @@
+version: '3.5'
+
+services:
+    user-db:
+        container_name: user-bd
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: 'user_pg'
+        volumes:
+            - user-db:/data/postgres
+        ports:
+            - "4000:5432"
+        networks:
+            - postgres 
+
+    certificate-db:
+        container_name: certificate-db
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: 'certificate_pg'
+        volumes:
+            - certificate-db:/data/postgres
+        ports:
+            - "3000:5432"
+        networks:
+            - postgres      
+
+    subscription-db:
+        container_name: subscription-db
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: 'subscription_pg'
+        volumes:
+            - subscription-db:/data/postgres
+        ports:
+            - "2000:5432"
+        networks:
+            - postgres     
+
+    event-db:
+        container_name: event-db
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: 'event_pg'
+        volumes:
+            - event-db:/data/postgres
+        ports:
+            - "1000:5432"
+        networks:
+            - postgres   
+networks:
+    postgres:
+        driver: bridge
+
+volumes:
+    user-db:
+    certificate-db:
+    subscription-db:
+    event-db:
