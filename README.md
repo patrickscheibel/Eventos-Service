@@ -1,6 +1,6 @@
-# Banco de dados
+# Database
 docker-compose up -d
 
 # APIs
-npm install
+npm install\
 node index.js
